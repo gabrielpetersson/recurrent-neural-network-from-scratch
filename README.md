@@ -14,27 +14,29 @@ pip install rnngen
 ## Usage
 
 ```python
-import rnngen
-from rnngen import datasets
+import rnngen  # Imports package
+from rnngen import datasets  # Imports dataset directories
 
-# Processes the dataset "SIMPSON" to directory "processed_simpson".
-rnngen.process(datasets.SIMPSON, 'processed_simpson')
-
-# Uses the processed text "processed_simpson" and trains the model with word2vec on it.
-rnngen.generate('processed_simpson')
+# Will start training the model with default settings and embeddings using word2vec. 
+# (use_word2vec = True, emb_dir = SIMPSONS_EMBEDDINGS)
+# Advanced usage is explained below, and how to use your own data.
+rnngen.generate(datasets.SIMPSONS_PROCESSED)
 ```
-### Word2Vec
-Word2Vec is integrated in rnngen.generate, and it creates word embeddings based on the text. For good quality, the model should train for at least 24 hours (On a mediocre school computer, may go way faster with a better processor)
+### rnngen.word2vec
+Word2Vec can be trained with rnngen.word2vec('some_processed_text', 'save_embeddings_dir'), and it creates word embeddings based on the text. For good quality, the model should train for at least 24 hours (On a mediocre school computer). 
+Already trained embeddings is in the directory: rnngen.datasets.SIMPSONS_EMBEDDINGS
 
 ### rnngen.generate
-Given a sentence 'the mouse caught a', the model will try to predict the next word. Hopefully it gives the word "mouse" a high probability, but if not, the model will change parameters so that next time a similar sentence appear, it will predict something similar. This is then repeated for a few hours.
+Given a sentence 'the mouse caught a', the model will try to predict the next word. Hopefully it gives the word "mouse" a high probability, but if not, the model will change parameters so that next time a similar sentence appear, it will predict something similar. This is then repeated for a few hours, until it generates legitimate sentences.
 
 ## Knowledge prerequisites for understanding
 ### Word2Vec:
 Instead of sparse vector representations of a word, you can have a dense representation. These are called embeddings. </br>
 Link for more info: https://en.wikipedia.org/wiki/Word2vec
 #### Common words
-Embedding: A vector of size 300 (default) that represent a word. Embeddings in plural is a matrix (vocabulary size, embedding size)
+Embedding: A vector of size 300 (default) that represent a word. Embeddings in plural is a matrix (vocabulary size, embedding size)</br>
+Cosine Similarity: Is used for testing embeddings. The cosine similarity between two word vectors is the semantic difference.
+A cosine similarity of 1 means interchangable words, and a cosine similarity of -1 means completely different words. The words 'he' and 'she' should have close to 1.
 </br></br>
 
 ### Recurrent neural network:
@@ -48,22 +50,28 @@ will look at the last 4 words and use them to predict the next one.
 </br></br>
 
 ## Advanced Usage
-All parameters can be tuned and can be changed in setupvariables.py
+All parameters should be tuned in setupvariables.py for optimal results.
 
 ```python
 import rnngen
 from rnngen import datasets
 
-# You can access already processed datasets: datasets.SIMPSON_PROCESSED or datasets.BOOKS_PROCESSED
-# SIMPSON_PROCESSED contains 300 episode manuscripts of simpsons and BOOKS_PROCESSED contains 20 books.
-rnngen.generate(datasets.SIMPSON_PROCESSED)
+# To use your own data, you will need a txt file at least the size of a book. 
+# rnngen.pre_process will process your txt file into a clean txt file.
+rnngen.pre_process('dir_to_your_file', 'dir_to_save_file')
 
-# text dir(string): Directory to processed text you want to use
-# word2vec_setting(string): 'new' creates new word embeddings, 'load' loads an already trained one
-# emb_dir(string): Where embeddings will be saved or loaded depending on word2vec_setting
-# use_word2vec(Boolean): If True it will use word2vec. If false, it uses sparse word vectors. [0, 0, 1]
-# Default settings:
-rnngen.generate(text_dir, word2vec_setting='new', emb_dir='embeddings.npy', use_word2vec=True)
+# You can access already processed datasets: datasets.SIMPSONS_PROCESSED and datasets.BOOKS_PROCESSED
+# SIMPSONS_PROCESSED contains 300 episode manuscripts of The Simpsons and BOOKS_PROCESSED contains 20 books.
+
+# To train Word2Vec, pass in directory to the processed file you want to use and directory to save path.
+rnngen.word2vec('dir_to_processed_file', 'dir_to_save_embeddings')
+
+# To train model, pass in directory to the processed file(same as in word2vec), and specify the word2vec embeddings in emb_dir. 
+# If you set use_word2vec=False, sparse vectors will be used instead. (which are slow, boring and creates low quality generating)
+# The default emb_dir is SIMPSONS_EMBEDDINGS
+rnngen.generate('dir_to_processed_file',  use_word2vec=True, emb_dir='dir_to_embeddings')
+
+#Example of full usage using datasets.BOOKS (rnngen/resources/datasets/)
 ```
 ## Important parameters in setupvariables.py
 
