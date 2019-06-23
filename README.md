@@ -22,11 +22,11 @@ from rnngen import datasets  # Imports dataset directories
 # Advanced usage is explained below, and how to use your own data.
 rnngen.generate(datasets.SIMPSONS_PROCESSED)
 ```
-### rnngen.word2vec
+### rnngen.word2vec('dir_to_text', 'dir_to_save_embeddings')
 Word2Vec can be trained with rnngen.word2vec('some_processed_text', 'save_embeddings_dir'), and it creates word embeddings based on the text. For good quality, the model should train for at least 24 hours (On a mediocre school computer). 
 Already trained embeddings is in the directory: rnngen.datasets.SIMPSONS_EMBEDDINGS
 
-### rnngen.generate
+### rnngen.generate('dir_to_text', use_word2vec=True, embeddings_dir=datasets.SIMPSONS_EMBEDDINGS)
 Given a sentence 'the mouse caught a', the model will try to predict the next word. Hopefully it gives the word "mouse" a high probability, but if not, the model will change parameters so that next time a similar sentence appear, it will predict something similar. This is then repeated for a few hours, until it generates legitimate sentences.
 
 ## Knowledge prerequisites for understanding
@@ -57,6 +57,8 @@ import rnngen
 from rnngen import datasets
 
 # To use your own data, you will need a txt file at least the size of a book. 
+# If using yoour own data, some variables might need to get changed.
+# Read setupvariables.py for more info.
 # rnngen.pre_process will process your txt file into a clean txt file.
 rnngen.pre_process('dir_to_your_file', 'dir_to_save_file')
 
@@ -66,12 +68,19 @@ rnngen.pre_process('dir_to_your_file', 'dir_to_save_file')
 # To train Word2Vec, pass in directory to the processed file you want to use and directory to save path.
 rnngen.word2vec('dir_to_processed_file', 'dir_to_save_embeddings')
 
-# To train model, pass in directory to the processed file(same as in word2vec), and specify the word2vec embeddings in emb_dir. 
-# If you set use_word2vec=False, sparse vectors will be used instead. (which are slow, boring and creates low quality generating)
+# To train model, pass in directory to the processed file(same as in word2vec), and 
+# specify the word2vec embeddings in emb_dir. 
+# If you set use_word2vec=False, sparse vectors will be used instead. (which are slow and boring)
 # The default emb_dir is SIMPSONS_EMBEDDINGS
 rnngen.generate('dir_to_processed_file',  use_word2vec=True, emb_dir='dir_to_embeddings')
 
-#Example of full usage using datasets.BOOKS (rnngen/resources/datasets/)
+#Example of full usage using datasets.BOOKS (which is './rnngen/resources/datasets/books.txt')
+
+rnngen.pre_process(datasets.BOOKS, 'processed_text')
+
+rnngen.word2vec('processed_text', 'word_embeddings')
+
+rnngen.generate('processed_text', emb_dir='word_embeddings')
 ```
 ## Important parameters in setupvariables.py
 
