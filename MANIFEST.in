@@ -1,0 +1,6 @@
+include rnngen\resources\datasets\*.txt
+include rnngen\resources\embeddings\*.npy
+include rnngen\resources\processeddata\*.txt
+
+include README.md
+include LICENSE.txt
