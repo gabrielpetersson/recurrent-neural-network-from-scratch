@@ -116,12 +116,12 @@ Hidden state: The special part with recurrent networks is the hidden state, whic
 Is responsible for parameters when training Rnn, and is essential to tune for good results.
 
 ### preprocess_setup:
-#####'WORD_THRESHOLD'
+##### 'WORD_THRESHOLD'
 Removes all sentences that contains word that appear less than 'WORD_THRESHOLD' times.
 It is defaulted at 40 because of huge datasets, but if you try on your own smaller dataset,
 this needs to be lowered.
 </br></br>
-#####'TRAINING_TYPE'
+##### 'TRAINING_TYPE'
 Is defaulted to 'words' but can be set to 'letters'. When set to 'letters', the generative
 model will divide the words into letters instead, and predict letter for letter. If 'letters', do not
 forget to increase 'BP_LOOK_BACK'. If it is set to 4, it will only be able to look 4 letters back in
