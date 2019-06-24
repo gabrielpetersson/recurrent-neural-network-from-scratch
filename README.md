@@ -22,32 +22,7 @@ from rnngen import datasets  # Imports dataset directories
 # Advanced usage is explained below, and how to use your own data.
 rnngen.generate(datasets.SIMPSONS_PROCESSED)
 ```
-### rnngen.word2vec('dir_to_text', 'dir_to_save_embeddings')
-Word2Vec can be trained with rnngen.word2vec('some_processed_text', 'save_embeddings_dir'), and it creates word embeddings based on the text. For good quality, the model should train for at least 24 hours (On a mediocre school computer). 
-Already trained embeddings is in the directory: rnngen.datasets.SIMPSONS_EMBEDDINGS
 
-### rnngen.generate('dir_to_text', use_word2vec=True, embeddings_dir=datasets.SIMPSONS_EMBEDDINGS)
-Given a sentence 'the mouse caught a', the model will try to predict the next word. Hopefully it gives the word "mouse" a high probability, but if not, the model will change parameters so that next time a similar sentence appear, it will predict something similar. This is then repeated for a few hours, until it generates legitimate sentences.
-
-## Knowledge prerequisites for understanding
-### Word2Vec:
-Instead of sparse vector representations of a word, you can have a dense representation. These are called embeddings. </br>
-Link for more info: https://en.wikipedia.org/wiki/Word2vec
-#### Common words
-Embedding: A vector of size 300 (default) that represent a word. Embeddings in plural is a matrix (vocabulary size, embedding size)</br>
-Cosine Similarity: Is used for testing embeddings. The cosine similarity between two word vectors is the semantic difference.
-A cosine similarity of 1 means interchangable words, and a cosine similarity of -1 means completely different words. The words 'he' and 'she' should have close to 1.
-</br></br>
-
-### Recurrent neural network:
-Instead of normal neural networks, recurrent neural networks can be used to look not just at the current input, but at inputs and probabilities in the past, and is therefore good for forecasting or creating generative models that
-depends on earlier inputs, such as text. You need to have the past context to keep on writing.</br>
-Link for more info: https://medium.com/explore-artificial-intelligence/an-introduction-to-recurrent-neural-networks-72c97bf0912
-
-#### Common words
-Backpropagation look back (bp_look_back): The number of words the model will look back at while training. If set to 5, the model
-will look at the last 4 words and use them to predict the next one.
-</br></br>
 
 ## Advanced Usage
 All parameters should be tuned in setupvariables.py for optimal results.
@@ -82,6 +57,53 @@ rnngen.word2vec('processed_text', 'word_embeddings')
 
 rnngen.generate('processed_text', emb_dir='word_embeddings')
 ```
+
+## Output
+
+### Word2Vec
+
+```
+Loss: 0.2342 [1.46, 0.4549, 0.3594, 0.3191, 0.256, 0.2449]  # Current loss followed by earlier losses
+Iter: 600000 of 646860  # Current iteration
+Epoch: 9 of 10  # Current epoch
+he | she:  0.6017      # he and she are 2 word embeddings that are tested. They are folloed by word2vec cosine distance. (Similarity)
+almost | tv:  0.0279   # almost and tv has way lower cosine distance than he and she, therefore low similarity.
+problem | window:  0.1334 # These can sometimes be used interchangably, 'i have a problem/window', therefore medium cosine distance.
+```
+These word similarities are trained over time, are are nons sense in the start.
+
+### Generator
+
+### rnngen.word2vec('dir_to_processed_text', 'dir_to_save_embeddings')
+Word2Vec can be trained with rnngen.word2vec('some_processed_text', 'save_embeddings_dir'), and it creates word embeddings based on the text. For good quality, the model should train for at least 24 hours (On a mediocre school computer). 
+Already trained embeddings is in the directory: rnngen.datasets.SIMPSONS_EMBEDDINGS
+
+### rnngen.generate('dir_to_processed_text', use_word2vec=True, embeddings_dir=datasets.SIMPSONS_EMBEDDINGS)
+Given a sentence 'the mouse caught a', the model will try to predict the next word. Hopefully it gives the word "mouse" a high probability, but if not, the model will change parameters so that next time a similar sentence appear, it will predict something similar. This is then repeated for a few hours, until it generates legitimate sentences.
+
+### rnngen.pre_process('dir_to_text', 'dir_to_save_processed_text')
+Cleans sentences from trash, and creates high quality easy to work with text.
+
+## Knowledge prerequisites for understanding
+### Word2Vec:
+Instead of sparse vector representations of a word, you can have a dense representation. These are called embeddings. </br>
+Link for more info: https://en.wikipedia.org/wiki/Word2vec
+#### Common words
+Embedding: A vector of size 300 (default) that represent a word. Embeddings in plural is a matrix (vocabulary size, embedding size)</br>
+Cosine Similarity: Is used for testing embeddings. The cosine similarity between two word vectors is the semantic difference.
+A cosine similarity of 1 means interchangable words, and a cosine similarity of -1 means completely different words. The words 'he' and 'she' should have close to 1.
+</br></br>
+
+### Recurrent neural network:
+Instead of normal neural networks, recurrent neural networks can be used to look not just at the current input, but at inputs and probabilities in the past, and is therefore good for forecasting or creating generative models that
+depends on earlier inputs, such as text. You need to have the past context to keep on writing.</br>
+Link for more info: https://medium.com/explore-artificial-intelligence/an-introduction-to-recurrent-neural-networks-72c97bf0912
+
+#### Common words
+Backpropagation look back (bp_look_back): The number of words the model will look back at while training. If set to 5, the model
+will look at the last 4 words and use them to predict the next one.
+</br></br>
+
 ## Important parameters in setupvariables.py
 
 ### parameters_setup:
