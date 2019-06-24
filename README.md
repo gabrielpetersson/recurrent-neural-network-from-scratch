@@ -39,7 +39,7 @@ rnngen.pre_process('dir_to_your_file', 'dir_to_save_file')
 # You can access already processed datasets: datasets.SIMPSONS_PROCESSED and datasets.BOOKS_PROCESSED.
 # SIMPSONS_PROCESSED contains 300 episode manuscripts of The Simpsons and BOOKS_PROCESSED contains 25 books.
 
-# To train Word2Vec, pass in directory to the processed file you want to use and directory to save word embeddings.
+# To train Word2Vec, pass in directory to the processed file and directory where to save word embeddings.
 # The term Word Embeddings are explained in 'Knowledge Prerequisites' below.
 rnngen.word2vec('dir_to_processed_file', 'dir_to_save_embeddings')
 
@@ -55,7 +55,7 @@ rnngen.pre_process(datasets.BOOKS, 'processed_text')
 
 rnngen.word2vec('processed_text', 'word_embeddings')
 
-rnngen.generate('processed_text', emb_dir='word_embeddings')  # Here using same processed_text as in word2vec training
+rnngen.generate('processed_text', emb_dir='word_embeddings') # Must use SAME processed_text as in word2vec
 ```
 
 ## Output
