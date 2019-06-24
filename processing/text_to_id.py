@@ -68,7 +68,7 @@ def text_to_id(filename, setup):
             one_sentence = []
             unk = False
             for word_nr, word in enumerate(sentence):
-
+                # Filters out sentences with words that appear less than THRESHHOLD times
                 if word in final_word_dict:
                     one_sentence.append(final_word_dict[word])
                 elif word != '':
@@ -86,6 +86,12 @@ def text_to_id(filename, setup):
         print('Unique words:', len(final_word_dict))
         print('Number of sentences:', len(all_sentences))
         print('Processing Done.\n')
+        if len(all_sentences) < 10000:
+            print('WARNING: You are using a very small dataset (if using word2vec). \n'
+                  'It may still work, but you should update some parameters in setupvariables.py\n'
+                  'WORD_THRESHOLD Should be lowered. (Low numbers decrease quality of data, \n'
+                  'but increases available data. For datasets the size of a movie manuscript,\n'
+                  ' 0 or 1 is reommended.)')
         return np.array(all_sentences), final_word_dict, rev_dic, sentence_lengths
 
     if letter_words == 'letters':
