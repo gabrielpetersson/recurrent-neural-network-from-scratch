@@ -3,6 +3,9 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import random
 from rnngen.word2vec.embedding_testing import test_embeddings
+from rnngen.processing.text_to_id import text_to_id
+from rnngen.setupvariables import preprocess_setup, word2vec_setup, test_emb_setup
+from rnngen.recurrentnetwork.trainer import load_data
 
 
 def get_data(data, window_size=1):
@@ -26,7 +29,6 @@ def get_data(data, window_size=1):
             for y in indexes:
                 xs.append(sentence[ind])
                 ys.append(sentence[y])
-
     return np.array(xs), np.array(ys)
 
 
@@ -36,7 +38,6 @@ def forward_propagation(x_batch, weights):
     # weights: emb x vocab_size
     z = np.dot(x_batch, weights)
     softmax = np.exp(z) / (np.sum(np.exp(z)))
-
     return softmax
 
 
@@ -54,10 +55,8 @@ def back_propagation(y_batch, softmax, weights, x_batch):
 
 
 def calculate_loss(softmax, y):
-
     m = softmax.shape[1]
     cost = -(1 / m) * np.sum(np.sum(y * np.log(softmax)))
-
     return cost
 
 
@@ -73,7 +72,6 @@ def one_hot(ys, unique_words):
 def get_words_to_check(dicts, test_words, random_words):
     words_to_check = []
     words_to_check += test_words
-    print(test_words)
     vocab_size = len(dicts['word_to_id'])
     for _ in range(random_words):
         try:
@@ -82,7 +80,6 @@ def get_words_to_check(dicts, test_words, random_words):
             words_to_check.append((random_words1, random_words2))
         except KeyError:
             pass
-    print(words_to_check)
     return words_to_check
 
 
@@ -96,21 +93,17 @@ def print_word_similarity(words_to_check, word_emb, dicts):
         except KeyError:
             pass
     print('')
-
     return checked_words
 
 
 def get_batches(x, y, batches, word_emb, unique_words, iteration):
-
     x_indexes = x[batches * iteration:batches * iteration + batches]
     x_batch = word_emb[x_indexes.astype(int), :]
     y_batch = one_hot(y[batches * iteration:batches * iteration + batches], unique_words)
-
     return x_indexes, x_batch, y_batch
 
 
 def count_print_loss(loss, losses, iters_before_reset, m, batches, epoch, epochs, iteration):
-
     loss = round(loss / iters_before_reset * 100, 4)
     losses.append(loss)
     print_losses = losses
@@ -127,12 +120,22 @@ def count_print_loss(loss, losses, iters_before_reset, m, batches, epoch, epochs
     return losses
 
 
-def word2vec_trainer(data, word2vec_setup, dicts, test_emb_setup):
+def word2vec_trainer(text_dir, save_emb_dir, previously_trained_emb=''):
+    """
+    Trains word embeddings on data with 2 layer neural network.
+
+    :param text_dir: Directory to training data
+    :param save_emb_dir: Directory to save word embeddings
+    :param previously_trained_emb: If set to a directory, will open this emb and train it
+    :return: Returns matrix of word embeddings
+    """
+    if previously_trained_emb and not previously_trained_emb.endswith('.npy'):
+        previously_trained_emb += '.npy'
+    data, dicts, sentences_lengths = load_data(text_dir, preprocess_setup)
     print('Word2Vec trainer starting...')
     batches = word2vec_setup['BATCHES']
     embedding_size = word2vec_setup['EMBEDDING_SIZE']
     epochs = word2vec_setup['EPOCHS']
-    emb_dir = word2vec_setup['EMB_DIR']
     lr = word2vec_setup['LEARNING_RATE']
     short = word2vec_setup['SHORT_MODE']
     iters_before_decrease = word2vec_setup['ITERATIONS_BEFORE_LR_DECREASE']
@@ -143,7 +146,11 @@ def word2vec_trainer(data, word2vec_setup, dicts, test_emb_setup):
     test_words = test_emb_setup['TESTING_WORDS']
 
     unique_words = len(dicts['word_to_id'])
-    word_emb = np.random.randn(unique_words, embedding_size)
+    # Initialize or load word embedding matrix
+    if not previously_trained_emb:
+        word_emb = np.random.randn(unique_words, embedding_size)
+    else:
+        word_emb = np.load(previously_trained_emb)
     weights = np.random.randn(embedding_size, unique_words)
     xs, ys = get_data(data)
     m = len(xs)
@@ -152,43 +159,51 @@ def word2vec_trainer(data, word2vec_setup, dicts, test_emb_setup):
     accumulated_loss = 0  # Accumulates losses before each LR_DECREASE
 
     assert ys.shape == xs.shape
-    loss = 0
-    print('Word2vec is up running.\n')
-    for epoch in range(epochs):
+    print('Word2vec is up running. (May take a few minutes before verbose)\n')
+    for epoch in range(epochs):  # Iters epochs
         for iteration in range(m//batches-3):
-            x_indexes, x_batch, y_batch = get_batches(xs, ys, batches, word_emb, unique_words, iteration)
-            softmax = forward_propagation(x_batch, weights)
-            loss = calculate_loss(softmax, y_batch)
+            # Gets batch data
+            x_indexes, x_batch, y_batch = get_batches(xs, ys,
+                                                      batches, word_emb,
+                                                      unique_words, iteration)
+            softmax = forward_propagation(x_batch, weights)  # Forward propagates
+            loss = calculate_loss(softmax, y_batch)  # Calculates loss
             accumulated_loss += loss
-            d_weights, d_word_embeddings = back_propagation(y_batch, softmax, weights, x_batch)
-
-            if iteration % iters_before_decrease == 0 and iteration != 0:
-                losses = count_print_loss(accumulated_loss, losses, iters_before_decrease, m, batches, epoch, epochs, iteration)
+            d_weights, d_word_embeddings = back_propagation(y_batch,  # Back Propagation
+                                                            softmax,
+                                                            weights,
+                                                            x_batch)
+            # Every iters_before_decrease iter, losses and cosine similarities will be printed
+            if iteration % iters_before_decrease == 0 and (iteration != 0 and epochs == 0):
+                losses = count_print_loss(accumulated_loss, losses,
+                                          iters_before_decrease, m,
+                                          batches, epoch, epochs,
+                                          iteration)
                 accumulated_loss = 0
-                lr = lr * lr_decrease
+                lr = lr * lr_decrease  # Decrease learning rate
                 if verbose_cosine_distance:
                     words_to_check = get_words_to_check(dicts, test_words, random_words=4)
                     print_word_similarity(words_to_check, word_emb, dicts)
                 if iteration > 30000 or epoch >= 1:
-                    np.save(emb_dir, word_emb)
+                    np.save(save_emb_dir, word_emb)
 
-            if short and iteration > 5:   # Only for developing, easier checking so things work out.
+            if short and iteration > 100:   # Only for developing, easier checking so things work out.
+                np.save(save_emb_dir, word_emb)
                 break
 
+            # Standard SGD. Should be upgraded to Adam
             weights = weights - d_weights * lr / len(x_batch) / batches
             word_emb[x_indexes.astype(int), :] = word_emb[x_indexes.astype(int), :] \
                 - (d_word_embeddings * lr / len(x_batch)) / batches
 
             all_losses.append(loss)
-    np.save(emb_dir, word_emb)
 
+    np.save(save_emb_dir, word_emb)
     if use_test_embeddings:
         test_embeddings(word_emb, dicts['id_to_word'], dicts['word_to_id'], test_emb_setup)
-
     plt.plot(all_losses)
     plt.show()
 
     print('\nOBS: Word vectors must be separately trained for every new change. '
           '\nThey cannot be used for another set of text'
           ' or with another set of preprocessing parameters.\n')
-    return word_emb
