@@ -43,6 +43,8 @@ rnngen.pre_process('dir_to_your_file', 'dir_to_save_file')
 # The term Word Embeddings are explained in 'Knowledge Prerequisites' below.
 rnngen.word2vec('dir_to_processed_file', 'dir_to_save_embeddings')
 
+# You can access already trained embeddings in datasets.SIMPSONS_EMBEDDINGS. Yet to come BOOKS_EMBEDDINGS
+
 # To train model, pass in directory to the processed file(must be same as in word2vec), and 
 # specify the word2vec embeddings in embeddings_dir. 
 # If you set use_word2vec=False, sparse vectors will be used instead. (which are slow and boring)
@@ -50,6 +52,8 @@ rnngen.word2vec('dir_to_processed_file', 'dir_to_save_embeddings')
 rnngen.generate('dir_to_processed_file',  use_word2vec=True, emb_dir='dir_to_embeddings')
 
 #Example of full usage using datasets.BOOKS (which is './rnngen/resources/datasets/books.txt')
+import rnngen
+from rnngen import datasets
 
 rnngen.pre_process(datasets.BOOKS, 'processed_text')
 
@@ -66,23 +70,24 @@ rnngen.generate('processed_text', emb_dir='word_embeddings') # Must use SAME pro
 Loss: 0.2342 [1.46, 0.4549, 0.3594, 0.3191, 0.256, 0.2449]  # Current loss followed by earlier losses
 Iter: 600000 of 646860  # Current iteration
 Epoch: 9 of 10  # Current epoch
-he | she:  0.6017 # he and she are 2 tested word embeddings, followed by cosine similairy. (Similarity of words)
+he | she:  0.6017 # he and she are 2 tested word embeddings, followed by a high cosine similairy. (Similarity of words)
 almost | tv:  0.0279 # almost and tv has way lower cosine similarity than he and she, therefore low similarity.
 problem | window:  0.1334 # Sometimes interchangable, 'i have a problem/window', therefore medium cosine similarity.
 ```
-These word similarities are trained over time, are are nons sense in the start.
+These word similarities are trained over time, are are nonsense in the start.
 
 ## All callable modules
 
 ### rnngen.word2vec('dir_to_processed_text', 'dir_to_save_embeddings')
 Word2Vec can be trained with rnngen.word2vec('some_processed_text', 'save_embeddings_dir'), and it creates word embeddings based on the text. For good quality, the model should train for at least 24 hours (On a mediocre school computer). 
-Already trained embeddings is in the directory: rnngen.datasets.SIMPSONS_EMBEDDINGS
+Already trained embeddings are: datasets.SIMPSONS_EMBEDDINGS
 
 ### rnngen.generate('dir_to_processed_text', use_word2vec=True, embeddings_dir=datasets.SIMPSONS_EMBEDDINGS)
 Given a sentence 'the mouse caught a', the model will try to predict the next word. Hopefully it gives the word "mouse" a high probability, but if not, the model will change parameters so that next time a similar sentence appear, it will predict something similar. This is then repeated for a few hours, until it generates legitimate sentences.
 
 ### rnngen.pre_process('dir_to_text', 'dir_to_save_processed_text')
-Cleans sentences from trash, and creates high quality easy to work with text.
+Cleans sentences from trash, and creates high quality easy to work with text.</br>
+Already processed texts are: datasets.SIMPSONS_PROCESSED and datasets.BOOKS_PROCESSED
 
 ## Knowledge prerequisites for understanding
 ### Word2Vec:
@@ -101,7 +106,8 @@ Link for more info: https://medium.com/explore-artificial-intelligence/an-introd
 
 #### Common words
 Backpropagation look back (bp_look_back): The number of words the model will look back at while training. If set to 5, the model
-will look at the last 4 words and use them to predict the next one.
+will look at the last 4 words and use them to predict the next one.</br>
+Hidden state: The special part with recurrent networks is the hidden state, which saves information from past training and uses the information to hopefully generate legitimate sentences.
 </br></br>
 
 ## Important parameters in setupvariables.py
