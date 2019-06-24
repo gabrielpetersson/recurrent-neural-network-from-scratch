@@ -66,9 +66,9 @@ rnngen.generate('processed_text', emb_dir='word_embeddings')
 Loss: 0.2342 [1.46, 0.4549, 0.3594, 0.3191, 0.256, 0.2449]  # Current loss followed by earlier losses
 Iter: 600000 of 646860  # Current iteration
 Epoch: 9 of 10  # Current epoch
-he | she:  0.6017      # he and she are 2 word embeddings that are tested. They are folloed by word2vec cosine distance. (Similarity)
-almost | tv:  0.0279   # almost and tv has way lower cosine distance than he and she, therefore low similarity.
-problem | window:  0.1334 # These can sometimes be used interchangably, 'i have a problem/window', therefore medium cosine distance.
+he | she:  0.6017 # he and she are 2 tested word embeddings, followed by cosine distance. (Similarity)
+almost | tv:  0.0279 # almost and tv has way lower cosine distance than he and she, therefore low similarity.
+problem | window:  0.1334 # Sometimes interchangable, 'i have a problem/window', therefore medium cosine distance.
 ```
 These word similarities are trained over time, are are nons sense in the start.
 
