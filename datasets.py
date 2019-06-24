@@ -1,8 +1,16 @@
+import os
+path_to_module = os.path.dirname(__file__)
 
-BOOKS = 'rnngen/resources/datasets/alice.txt'
-SIMPSON = 'rnngen/resources/datasets/simpson.txt'
-# SIMPSON_SHORT = 'rnngen/resources/datasets/simpsonshort.txt'  defect, cannot be read by utf-8.
+datasets_path = os.path.join(path_to_module, "resources", "datasets")
+processed_data_path = os.path.join(path_to_module, "resources", "processeddata")
+embeddings_data_path = os.path.join(path_to_module, "resources", "embeddings")
 
-BOOKS_PROCESSED = 'rnngen/resources/processeddata/alice_processed.txt'
-SIMPSON_PROCESSED = 'rnngen/resources/processeddata/simpson_processed.txt'
-SIMPSON_SHORT_PROCESSED = 'rnngen/resources/processeddata/simpson_short_processed.txt'
+BOOKS = os.path.join(datasets_path, "books.txt")
+SIMPSONS = os.path.join(datasets_path, "simpson.txt")
+
+BOOKS_PROCESSED = os.path.join(processed_data_path, "books_processed.txt")
+SIMPSONS_PROCESSED = os.path.join(processed_data_path, "simpson_processed.txt")
+SIMPSONS_SHORT_PROCESSED = os.path.join(processed_data_path, "simpson_short_processed.txt")
+
+SIMPSONS_EMBEDDINGS = os.path.join(embeddings_data_path, "simpson_embeddings.npy")
+SIMPSONS_EMBEDDINGS1 = os.path.join(embeddings_data_path, "simpson_embeddings1.npy")

@@ -1,9 +1,6 @@
 # Parameters, variables and constants
 #
 # May be tuned to increase quality of predicted text or changing the visuals of training.
-#
-#
-#
 #####################################
 
 # Parameters for training generative model.
@@ -36,7 +33,9 @@ preprocess_setup = {
     # If a word appears less than WORD_THRESHOLD in processing, the sentence will not be used
     # Prevents less occurring words and highers quality of processing
     # If you have a small processing set, this must be lowered
-    # Try to get at maximum 3k unique words. Having more slows down word2vec EXTREMELY
+    # Try to get at maximum 2k unique words. Having more slows down word2vec EXTREMELY
+    # WARNING: Default is 40. If changed, the new data cannot be combined with
+    # already trained embeddings and processed data.
     'WORD_THRESHOLD': 40,
 
     # If 'words' generate words, if 'letters' use letters instead.
@@ -46,7 +45,7 @@ preprocess_setup = {
 
 
 # Word2vec trains dense vector representation of words instead of sparse vectors.
-word2vec_params_setup = {
+word2vec_setup = {
 
     # Number of words/letters to predict each time
     'EMBEDDING_SIZE': 300,
@@ -55,13 +54,13 @@ word2vec_params_setup = {
     'BATCHES': 1,
 
     # Number of epochs to train. One epoch = going through all text once
-    'EPOCHS': 10,
+    'EPOCHS': 1,
 
     # Only for testing. Instantly finishes word2vec training.
-    'SHORT_MODE': True,
+    'SHORT_MODE': False,
 
     # Learning step size
-    'LEARNING_RATE': 0.2,
+    'LEARNING_RATE': 0.004,
 
     # Number of iterations before LR decreases and word2vec verbose
     'ITERATIONS_BEFORE_LR_DECREASE': 50,
@@ -71,7 +70,7 @@ word2vec_params_setup = {
     # To calculate a optimal decrease:
     # dataset_size(total iters) / ITERATIONS_BEFORE_LR_DECREASE = number_of_decreases
     # LR_DECREASE ^ number_of_decreases = 0.001
-    'LR_DECREASE': 0.96
+    'LR_DECREASE': 0.8
 }
 
 # Parameters for testing of word embedding representations.
@@ -99,5 +98,5 @@ predict_setup = {
     'SAMPLES': 15,
 
     # Seconds between every output.
-    'SECONDS_BETWEEN_PREDICT': 15
+    'SECONDS_BETWEEN_PREDICT': 3
 }
