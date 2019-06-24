@@ -47,6 +47,7 @@ def rnn_trainer(xs, ys, input_hidden, hidden_hidden, hidden_output, bh, by, node
             used_xs[seq] = xs[seq]
             x[used_xs[seq]] = 1
 
+        # Calculate current hidden state
         y = ys[seq]
         inner_hidden = np.dot(x, input_hidden) + np.dot(current_state, hidden_hidden)
         current_state = np.tanh(inner_hidden + bh)

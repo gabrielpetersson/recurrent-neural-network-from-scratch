@@ -5,27 +5,25 @@ from rnngen.misc.tools import id_word
 from rnngen.processing.text_to_id import text_to_id
 from rnngen.recurrentnetwork.rnn_one_sequence import rnn_trainer
 from rnngen.predict.generator import generate_words
-from rnngen.word2vec.word2vec import word2vec_trainer
-from rnngen.word2vec.embedding_testing import test_embeddings
-from rnngen.setupvariables import preprocess_setup, test_emb_setup, \
-                               parameters_setup, predict_setup, \
-                               word2vec_params_setup
+from rnngen.setupvariables import preprocess_setup,  \
+                                  parameters_setup, predict_setup, \
+                                  word2vec_setup
+
 
 class Generator:
 
-    def __init__(self, text_dir, word2vec_setting='new',
-                 emb_dir='embeddings.npy', use_word2vec=True):
+    def __init__(self, text_dir,
+                 use_word2vec=True, emb_dir='embeddings'):
         """
         :param text_dir: Directory to text/dataset used in training
-        :param word2vec_setting: If 'load' loads previously trained word embeddings
-                                 If 'new' creates new word embeddings.
-        :param emb_dir: The embeddings are saved/loaded in emb_dir
+        :param emb_dir: If use_word2vec, the word embeddings are loaded from emb_dir
         :param use_word2vec: If True, use word2vec.
                              If False, use sparse vectors [0, 0, 1]
         """
+        if not emb_dir.endswith('.npy'):
+            emb_dir += '.npy'
         self.emb_dir = emb_dir
         self.use_word2vec = use_word2vec
-        self.word2vec_setting = word2vec_setting
 
         # Loads the data.
         # Creates ID vectors, DICTS and removes sentences with rarely occurring words.
@@ -40,13 +38,10 @@ class Generator:
         self.seconds_between_predict = predict_setup['SECONDS_BETWEEN_PREDICT']
 
         # Word2vec training
-        self.embedding_size = word2vec_params_setup['EMBEDDING_SIZE']
+        self.embedding_size = word2vec_setup['EMBEDDING_SIZE']
         self.training_type = preprocess_setup['TRAINING_TYPE']
 
         # Assign additional params
-        self.word2vec_params_setup = word2vec_params_setup
-        self.word2vec_params_setup['EMB_DIR'] = emb_dir
-        self.word2vec_params_setup['WORD2VEC_SETTING'] = word2vec_setting
         self.predict_setup = predict_setup
         self.predict_setup['TRAINING_TYPE'] = self.training_type
         self.predict_setup['NODES'] = self.nodes
@@ -58,8 +53,17 @@ class Generator:
             self.embeddings = self.word2vec_training()
             input_size = self.embedding_size
 
+            if self.embeddings.shape[0] != self.vocab_size:
+                raise ValueError('Word2Vec embeddings and processed text do not match.\n'
+                                 'You must use the same processed text for training embeddings'
+                                 ' and for training rnn.\nFor example, if using datasets.SIMPSONS_PROCESSED'
+                                 '\nyou must use datasets.SIMPSONS_EMBEDDINGS. If having trained your,\n'
+                                 'own word embeddings, make sure to use the same processed text when training rnn.'
+                                 )
+
         else:
             input_size = self.vocab_size
+            self.embeddings = False
 
         # Weights
         self.input_hidden = np.random.randn(input_size, self.nodes) / 100
@@ -90,28 +94,16 @@ class Generator:
 
     def word2vec_training(self):
         """
-        Loads or creates new word embeddings depending on word2vec_setting.
+        Loads word embeddings.
         :return: word embeddings
         """
         print('Extract of Training Data:')
         print([id_word(sentence, self.dicts['word_to_id']) for sentence in self.data[:3]])
 
         # Loads already trained embeddings
-        if self.word2vec_setting == 'load':
-            embeddings = np.load(self.emb_dir)
-            if test_emb_setup['USE_TEST_EMBEDDINGS']:
-                test_embeddings(embeddings, self.dicts['id_to_word'],
-                                self.dicts['word_to_id'], test_emb_setup)
+        embeddings = np.load(self.emb_dir)
 
-        # Trains new embeddings
-        elif self.word2vec_setting == 'new':
-            embeddings = word2vec_trainer(self.data, self.word2vec_params_setup,
-                                          self.dicts, test_emb_setup)
-
-        else:
-            raise Exception('Invalid "word2vec_setting". Use "new" or "load"')
-
-        print('Embeddings Shape:', embeddings.shape, ' Vocab size by embeddings')
+        print('Embeddings Shape:', embeddings.shape, ' (Vocab size by embeddings)')
 
         return embeddings
 
@@ -203,7 +195,7 @@ class Generator:
 
                 # Prints and resets loss
                 print('\nloss: ' + str(round(total_loss / self.batches
-                                           / (current_sequence - last_sequence), 2)), created)
+                                                        / (current_sequence - last_sequence), 2)), created)
                 self.LEARNING_RATE = self.LEARNING_RATE * 0.995  # Decay learning rate
                 last_sequence = current_sequence
                 total_loss = 0
