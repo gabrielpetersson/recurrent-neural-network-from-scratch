@@ -74,7 +74,7 @@ he | she:  0.6017 # he and she are 2 tested word embeddings, followed by a high 
 almost | tv:  0.0279 # almost and tv has way lower cosine similarity than he and she, therefore low similarity.
 problem | window:  0.1334 # Sometimes interchangable, 'i have a problem/window', therefore medium cosine similarity.
 ```
-These word similarities are trained over time, are are nonsense in the start.
+These word similarities are trained over time, are nonsense in the start.
 
 ## All callable modules
 
