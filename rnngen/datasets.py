@@ -12,5 +12,5 @@ BOOKS_PROCESSED = os.path.join(processed_data_path, "books_processed.txt")
 SIMPSONS_PROCESSED = os.path.join(processed_data_path, "simpson_processed.txt")
 SIMPSONS_SHORT_PROCESSED = os.path.join(processed_data_path, "simpson_short_processed.txt")
 
-SIMPSONS_EMBEDDINGS = os.path.join(embeddings_data_path, "simpson_embeddings.npy")
-SIMPSONS_EMBEDDINGS1 = os.path.join(embeddings_data_path, "simpson_embeddings1.npy")
+SIMPSONS_EMBEDDINGS_300 = os.path.join(embeddings_data_path, "simpson_embeddings_300.npy")
+SIMPSONS_EMBEDDINGS_100 = os.path.join(embeddings_data_path, "simpson_embeddings_100.npy")
