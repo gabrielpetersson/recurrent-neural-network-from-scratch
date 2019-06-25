@@ -4,6 +4,7 @@ import numpy as np
 def rnn_trainer(xs, ys, input_hidden, hidden_hidden, hidden_output, bh, by, nodes,
                 sentence_length, dicts, bp_look_back, use_word2vec, emb):
     """
+    Takes data and weights, and return derivatives to optimize weights.
 
     :param xs: Train xs
     :param ys: Train ys
@@ -49,7 +50,15 @@ def rnn_trainer(xs, ys, input_hidden, hidden_hidden, hidden_output, bh, by, node
 
         # Calculate current hidden state
         y = ys[seq]
-        inner_hidden = np.dot(x, input_hidden) + np.dot(current_state, hidden_hidden)
+        try:
+            inner_hidden = np.dot(x, input_hidden) + np.dot(current_state, hidden_hidden)
+        except ValueError:
+            raise ValueError('Input and input_to_hidden weights are wrong dimensions.\n'
+                             'This is most likely caused by training rnn with\n'
+                             'different processed text that was used for word2vec.\n\n'
+                             'It can also be caused because any of the:\n'
+                             'processing_setup, params_setup or word2vec_setup\n'
+                             'variables/constants where changed. Change embeddings to 300.')
         current_state = np.tanh(inner_hidden + bh)
         hs[seq] = current_state
 

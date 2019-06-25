@@ -35,12 +35,20 @@ class Generator:
         self.nodes = parameters_setup['NODES']
         self.bp_look_back = parameters_setup['BP_LOOK_BACK']
         self.LEARNING_RATE = parameters_setup['LEARNING_RATE']
+        self.LEARNING_RATE_DECREASE = parameters_setup['LEARNING_RATE_DECREASE']
         self.seconds_between_predict = predict_setup['SECONDS_BETWEEN_PREDICT']
+
 
         # Word2vec training
         self.embedding_size = word2vec_setup['EMBEDDING_SIZE']
         self.training_type = preprocess_setup['TRAINING_TYPE']
-
+        # Assures no word2vec if training with letters, and prints a warning
+        if self.training_type == 'letters':
+            print('\nWARNING: training_type "word" is chosen. In setupvariables.py, BP_LOOK_BACK should be \n'
+                  'increased to around 15, MIN_WORDS should be increased to at least 25. \n'
+                  'Also recommended to decrease nodes and increase SAMPLES. '
+                  '\nWord2Vec will automatically be turned off.')
+            self.use_word2vec = False
         # Assign additional params
         self.predict_setup = predict_setup
         self.predict_setup['TRAINING_TYPE'] = self.training_type
@@ -51,7 +59,7 @@ class Generator:
         if use_word2vec:
             # Trains embeddings
             self.embeddings = self.word2vec_training()
-            input_size = self.embedding_size
+            input_size = self.embeddings.shape[1]
 
             if self.embeddings.shape[0] != self.vocab_size:
                 raise ValueError('Word2Vec embeddings and processed text do not match.\n'
@@ -139,8 +147,8 @@ class Generator:
                 current_sequence = 0
                 print('---------All processing trained. Starting from beginning again.----------')
 
-            # self.by = np.zeros_like(self.by)
-            # self.bh = np.zeros_like(self.bh)
+            self.by = np.zeros_like(self.by)
+            self.bh = np.zeros_like(self.bh)
 
             # Training of model, returns deltas
             delta_weights, loss = rnn_trainer(
@@ -156,7 +164,7 @@ class Generator:
             total_loss += loss/sentence_length  # Calculates loss w.r.t. length of processing
 
             # Updates weights every self.batches sequences.
-            if current_sequence % self.batches == 0:
+            if current_sequence % self.batches == 0 or current_sequence == 5:
                 # Alters weights with help of Adagrad. m is prefix for memory
                 for weights, d_weights, mem in zip(
                         [self.hidden_output, self.hidden_hidden, self.input_hidden, self.by, self.bh],
@@ -182,8 +190,8 @@ class Generator:
             # Checks if X seconds has passed by. If True, print loss
             if current_time + self.seconds_between_predict < time.time():
                 current_time = time.time()
-                # self.by = np.zeros_like(self.by)
-                # self.bh = np.zeros_like(self.bh)
+                self.by = np.zeros_like(self.by)
+                self.bh = np.zeros_like(self.bh)
 
                 # Predicts words
                 created = generate_words(
@@ -196,7 +204,7 @@ class Generator:
                 # Prints and resets loss
                 print('\nloss: ' + str(round(total_loss / self.batches
                                                         / (current_sequence - last_sequence), 2)), created)
-                self.LEARNING_RATE = self.LEARNING_RATE * 0.995  # Decay learning rate
+                self.LEARNING_RATE = self.LEARNING_RATE * self.LEARNING_RATE_DECREASE  # Decay learning rate
                 last_sequence = current_sequence
                 total_loss = 0
 
