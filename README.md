@@ -18,7 +18,7 @@ import rnngen  # Imports package
 from rnngen import datasets  # Imports dataset directories
 
 # Will start training the model with default settings and embeddings using word2vec. 
-# Only datasets.SIMPSONS_PROCESSED will work if embeddings_dir is not specified.
+# Only datasets.SIMPSONS_PROCESSED will work if using default embeddings_dir parameter.
 rnngen.generate(datasets.SIMPSONS_PROCESSED)
 ```
 
@@ -43,19 +43,19 @@ rnngen.pre_process('dir_to_your_file', 'dir_to_save_file')
 # The term Word Embeddings are explained in 'Knowledge Prerequisites' below.
 rnngen.word2vec('dir_to_processed_file', 'dir_to_save_embeddings')
 
-# You can access already trained embeddings in datasets.SIMPSONS_EMBEDDINGS. Yet to come BOOKS_EMBEDDINGS
+# You can access already trained embeddings in datasets.SIMPSONS_EMBEDDINGS_300 or 100. Yet to come BOOKS_EMBEDDINGS
 
 # To train model, pass in directory to the processed file(must be same as in word2vec), and 
 # specify the word2vec embeddings in embeddings_dir. 
 # If you set use_word2vec=False, sparse vectors will be used instead. (which are slow and boring)
-# The default embeddings_dir is SIMPSONS_EMBEDDINGS, and only works with SIMPSONS_PROCESSED
-rnngen.generate('dir_to_processed_file',  use_word2vec=True, emb_dir='dir_to_embeddings')
+# The default embeddings_dir is SIMPSONS_EMBEDDINGS_300, and only works with SIMPSONS_PROCESSED
+rnngen.generate('dir_to_processed_file',  use_word2vec=True, embeddings_dir='dir_to_embeddings')
 
 #Example of full usage using datasets.BOOKS (which is './rnngen/resources/datasets/books.txt')
 import rnngen
-from rnngen import datasets
+from rnngen import datasets as d
 
-rnngen.pre_process(datasets.BOOKS, 'processed_text')
+rnngen.pre_process(d.BOOKS, 'processed_text')
 
 rnngen.word2vec('processed_text', 'word_embeddings')
 
@@ -75,6 +75,42 @@ almost | tv:  0.0279 # almost and tv has way lower cosine similarity than he and
 problem | window:  0.1334 # Sometimes interchangable, 'i have a problem/window', therefore medium cosine similarity.
 ```
 These word similarities are trained over time, are nonsense in the start.
+
+### Test of embeddings
+When testing embeddings after a training session with rnngen.word2vec(), test_embeddings will test 10 of the embeddings with 5 other each, so the user can see if it has created good embeddings. The highest similarity words should be interchangable with the tested word.
+```
+These words have the highest cosine similarity (most similar) to "great".
+great 1.0  # The embedding of great is exactly the same as itself (no suprise)
+good 0.762  # The embedding of great is very similar to the embedding of 'good'. They are nearly always interchangable
+terrible 0.567  # Even though terrible has the opposite meaning, both can still be used at the same places.
+wonderful 0.553  
+perfect 0.456
+
+# More interchangable examples
+These words have the highest cosine similarity (most similar) to "he".
+he 1.0
+she 0.935
+youve 0.865
+ive 0.832
+weve 0.831
+
+These words have the highest cosine similarity (most similar) to "cat".
+cat 1.0
+dog 0.752
+clown 0.486  # Although very different words, they are both objects, and therefore have high similarity.
+bus 0.454
+husband 0.423
+
+```
+
+### Generated Sentences
+When training this recurrent network we want it to generate sentences for us. It will every 10 seconds(if default settings) predict a new row of words, and improve with time. After a time (a few days for good quality), a few legitimate sentences will start popping up.
+```
+loss: 4.9 #START# seeing everybody eating ruined you makes me # Loss and after that is the predicted text. Loss will g down with time
+          #START# im sorry , nice and think opening  
+          
+loss: 6.82 #START# relax pretty cheese guy  # The upper one is predicted with a probability distribution
+```
 
 ## All callable modules
 
