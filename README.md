@@ -39,7 +39,7 @@ rnngen.pre_process('dir_to_your_file', 'dir_to_save_file')
 # You can access already processed datasets: datasets.SIMPSONS_PROCESSED and datasets.BOOKS_PROCESSED.
 # SIMPSONS_PROCESSED contains 300 episode manuscripts of The Simpsons and BOOKS_PROCESSED contains 25 books.
 
-# To train Word2Vec, pass in directory to the processed file and directory where to save word embeddings.
+# To train Word2Vec, pass in a directory to a processed file and directory where to save the word embeddings.
 # The term Word Embeddings are explained in 'Knowledge Prerequisites' below.
 rnngen.word2vec('dir_to_processed_file', 'dir_to_save_embeddings')
 
@@ -69,11 +69,11 @@ rnngen.generate('processed_text', embeddings_dir='word_embeddings') # Must use S
 Loss: 0.2342 [1.46, 0.4549, 0.3594, 0.3191, 0.256, 0.2449]  # Current loss followed by earlier losses
 Iter: 600000 of 646860  # Current iteration
 Epoch: 9 of 10  # Current epoch
-he | she:  0.6017 # he and she are 2 tested word embeddings, followed by a high cosine similairy. (Similarity of words)
+he | she:  0.8017 # he and she are 2 tested word embeddings, followed by a high cosine similarity. (Similarity of words)
 almost | tv:  0.0279 # almost and tv has way lower cosine similarity than he and she, therefore low similarity.
-problem | window:  0.1334 # Sometimes interchangable, 'i have a problem/window', therefore medium cosine similarity.
+problem | window:  0.1334 # Sometimes interchangeable, 'i have a problem/window', therefore medium cosine similarity.
 ```
-These word similarities are trained over time, are nonsense in the start.
+These word similarities are trained over time and are nonsense in the start.
 
 ### Test of embeddings
 When testing embeddings after a training session with rnngen.word2vec(), test_embeddings will test 10 of the embeddings with 5 other each, so the user can see if it has created good embeddings. The highest similarity words should be interchangable with the tested word.
@@ -85,7 +85,7 @@ terrible 0.567  # Even though terrible has the opposite meaning, both can still 
 wonderful 0.553  
 perfect 0.456
 
-# More interchangable examples
+# More interchangeable examples
 These words have the highest cosine similarity (most similar) to "he".
 he 1.0
 she 0.935
@@ -105,7 +105,7 @@ husband 0.423
 ### Generated Sentences
 When training this recurrent network we want it to generate sentences for us. It will every 10 seconds(if default settings) predict a new row of words, and improve with time. After a time (a few days for good quality), a few legitimate sentences will start popping up.
 ```
-loss: 4.9 #START# seeing everybody eating ruined you makes me # Loss and after that is the predicted text. Loss will g down with time
+loss: 4.9 #START# seeing everybody eating ruined you makes me # Loss and after that is the predicted text. Loss will go down with time
           #START# im sorry , nice and think opening  
           
 loss: 6.82 #START# relax pretty cheese guy  # This one is predicted with a probability distribution
