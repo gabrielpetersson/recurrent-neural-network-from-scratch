@@ -85,13 +85,13 @@ def text_to_id(filename, setup):
 
         print('Unique words:', len(final_word_dict))
         print('Number of sentences:', len(all_sentences))
-        print('Processing Done.\n')
+        print('Processing Done.')
         if len(all_sentences) < 10000:
             print('WARNING: You are using a very small dataset (if using word2vec). \n'
                   'It may still work, but you should update some parameters in setupvariables.py\n'
                   'WORD_THRESHOLD Should be lowered. (Low numbers decrease quality of data, \n'
                   'but increases available data. For datasets the size of a movie manuscript,\n'
-                  ' 0 or 1 is reommended.)')
+                  ' 0 or 1 is recommended. The size of one book it should be around 3)')
         return np.array(all_sentences), final_word_dict, rev_dic, sentence_lengths
 
     if letter_words == 'letters':
@@ -105,7 +105,11 @@ def text_to_id(filename, setup):
                 if char not in letter_dic:
                     letter_dic[char] = nr
                     nr += 1
-
+        # Adds prefixes
+        words_to_add = ['#END#', '.', '#START#', '#UNK#']
+        for word in words_to_add:
+            letter_dic[word] = nr
+            nr += 1
         # Creates matrix with IDs instead of words.
         sentence_lengths = []
         all_sentences = []
@@ -118,6 +122,14 @@ def text_to_id(filename, setup):
             one_sentence = [letter_dic['#START#']] + one_sentence[1:-1] + [letter_dic['.']] + [letter_dic['#END#']]
             sentence_lengths.append(len(one_sentence))
             all_sentences.append(one_sentence)
-
+        print('Unique words:', len(letter_dic))
+        print('Number of sentences:', len(all_sentences))
+        print('Processing Done.\n')
+        if len(all_sentences) < 30000:
+            print('WARNING: You are using a very small dataset (especially if using word2vec). \n'
+                  'It may still work, but you should update some parameters in setupvariables.py\n'
+                  'WORD_THRESHOLD Should be lowered. (Low numbers decrease quality of data, \n'
+                  'but increases available data. For datasets the size of a movie manuscript,\n'
+                  ' 0 or 1 is recommended.) A few other params should also be tuned.')
         rev_dic = {value: letter for letter, value in letter_dic.items()}
         return np.array(all_sentences), letter_dic, rev_dic, sentence_lengths
