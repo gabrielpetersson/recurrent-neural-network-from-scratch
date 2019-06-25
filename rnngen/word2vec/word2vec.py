@@ -1,14 +1,14 @@
+import time
 from matplotlib import pyplot as plt
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import random
 from rnngen.word2vec.embedding_testing import test_embeddings
-from rnngen.processing.text_to_id import text_to_id
 from rnngen.setupvariables import preprocess_setup, word2vec_setup, test_emb_setup
 from rnngen.recurrentnetwork.trainer import load_data
 
 
-def get_data(data, window_size=1):
+def get_data(data, window_size):
     """
     Creates input training data by looking at words in context.
 
@@ -132,7 +132,7 @@ def word2vec_trainer(text_dir, save_emb_dir, previously_trained_emb=''):
     if previously_trained_emb and not previously_trained_emb.endswith('.npy'):
         previously_trained_emb += '.npy'
     data, dicts, sentences_lengths = load_data(text_dir, preprocess_setup)
-    print('Word2Vec trainer starting...')
+    print('\nWord2Vec trainer starting...')
     batches = word2vec_setup['BATCHES']
     embedding_size = word2vec_setup['EMBEDDING_SIZE']
     epochs = word2vec_setup['EPOCHS']
@@ -140,6 +140,7 @@ def word2vec_trainer(text_dir, save_emb_dir, previously_trained_emb=''):
     short = word2vec_setup['SHORT_MODE']
     iters_before_decrease = word2vec_setup['ITERATIONS_BEFORE_LR_DECREASE']
     lr_decrease = word2vec_setup['LR_DECREASE']
+    window_size = word2vec_setup['WINDOW_SIZE']
 
     use_test_embeddings = test_emb_setup['USE_TEST_EMBEDDINGS']
     verbose_cosine_distance = test_emb_setup['VERBOSE_COSINE']
@@ -152,11 +153,12 @@ def word2vec_trainer(text_dir, save_emb_dir, previously_trained_emb=''):
     else:
         word_emb = np.load(previously_trained_emb)
     weights = np.random.randn(embedding_size, unique_words)
-    xs, ys = get_data(data)
+    xs, ys = get_data(data, window_size)
     m = len(xs)
     losses = []  # saves accumulated losses
     all_losses = []  # saves all individual losses so it can be printed in matplot
     accumulated_loss = 0  # Accumulates losses before each LR_DECREASE
+    time_one_decrease = time.time()
 
     assert ys.shape == xs.shape
     print('Word2vec is up running. (May take a few minutes before verbose)\n')
@@ -166,6 +168,7 @@ def word2vec_trainer(text_dir, save_emb_dir, previously_trained_emb=''):
             x_indexes, x_batch, y_batch = get_batches(xs, ys,
                                                       batches, word_emb,
                                                       unique_words, iteration)
+
             softmax = forward_propagation(x_batch, weights)  # Forward propagates
             loss = calculate_loss(softmax, y_batch)  # Calculates loss
             accumulated_loss += loss
@@ -174,7 +177,9 @@ def word2vec_trainer(text_dir, save_emb_dir, previously_trained_emb=''):
                                                             weights,
                                                             x_batch)
             # Every iters_before_decrease iter, losses and cosine similarities will be printed
-            if iteration % iters_before_decrease == 0 and (iteration != 0 and epochs == 0):
+            if (iteration % iters_before_decrease == 0) and (iteration != 0 and epochs != 0):
+                print('Time per output: ', round(time.time() - time_one_decrease), ' Seconds')
+                time_one_decrease = time.time()
                 losses = count_print_loss(accumulated_loss, losses,
                                           iters_before_decrease, m,
                                           batches, epoch, epochs,
@@ -185,7 +190,7 @@ def word2vec_trainer(text_dir, save_emb_dir, previously_trained_emb=''):
                     words_to_check = get_words_to_check(dicts, test_words, random_words=4)
                     print_word_similarity(words_to_check, word_emb, dicts)
                 if iteration > 30000 or epoch >= 1:
-                    np.save(save_emb_dir, word_emb)
+                    np.save(f'emb{epoch}', word_emb)
 
             if short and iteration > 100:   # Only for developing, easier checking so things work out.
                 np.save(save_emb_dir, word_emb)

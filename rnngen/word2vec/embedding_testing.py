@@ -31,9 +31,9 @@ def test_embeddings(embeddings, id_to_word, word_to_id, test_emb_setup):
             ranking.append(answer)
             ranking_ind.append(ind)
             ranking1.append(answer1)
-        ranks1 = np.argsort(ranking1)[:5][::-1]
-        ranks = np.argsort(ranking)[-5:]
+        ranks = np.argsort(ranking)[-5:][::-1]
+        sim = np.array(ranking)[ranks]
         print('\nThese words are similar to "{}".'.format(id_to_word[similar]))
-        for i, j in zip(ranks, ranks1):
-            print(id_to_word[i], id_to_word[j])
+        for i, j in zip(ranks, sim):
+            print(id_to_word[i], j)
             pass
