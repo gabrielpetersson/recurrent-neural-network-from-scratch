@@ -56,10 +56,9 @@ import rnngen
 from rnngen import datasets as d
 
 rnngen.pre_process(d.BOOKS, 'processed_text')
-
 rnngen.word2vec('processed_text', 'word_embeddings')
+rnngen.generate('processed_text', embeddings_dir='word_embeddings') # Must use SAME processed_text as in word2vec
 
-rnngen.generate('processed_text', emb_dir='word_embeddings') # Must use SAME processed_text as in word2vec
 ```
 
 ## Output
@@ -109,7 +108,8 @@ When training this recurrent network we want it to generate sentences for us. It
 loss: 4.9 #START# seeing everybody eating ruined you makes me # Loss and after that is the predicted text. Loss will g down with time
           #START# im sorry , nice and think opening  
           
-loss: 6.82 #START# relax pretty cheese guy  # The upper one is predicted with a probability distribution
+loss: 6.82 #START# relax pretty cheese guy  # This one is predicted with a probability distribution
+           #START# im what school say  # This one predicts independently, and is greedy, taking the word with highest probability 
 ```
 
 ## All callable modules
