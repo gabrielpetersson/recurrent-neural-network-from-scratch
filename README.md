@@ -175,9 +175,9 @@ matplotlib</br>
 sklearn (only for cosine similarity)
 
 ## Conclusion and what I have learned
-Word2Vec is a very interesting form of representing words, and by experimenting with them, there is a lot to be learned. 
+Word2Vec is a very interesting form of representing words, and by experimenting with them, there is a lot to be learned. For example, if you would take the embedding of king, subtract man and add woman, the embedding would become very similar to queen. (Can be done with more sophisticated embeddings for example google)
 
-Recurrent neural networks do find some correlations in texts, for example knows when to stop and when to put a comma, and how some word groups appear after another, but the recurrent algorithm with hidden states is not powerful enough to create longer meaningful sentences based on other text. But I'm still amazed that an the algorithms can make sense of spoken english and even create some of its own.
+Recurrent neural networks do find some correlations in texts, for example knows when to stop and when to put a comma, and how some word groups appear after another, but the recurrent algorithm with hidden states is not powerful enough to create longer meaningful sentences based on other text. But I'm still amazed that an the algorithms can make sense of spoken english and even create some of its own, even of limited quality.
 
 ## TODO/What could be done in the future
 The next obvious step is to evolve the vanilla recurrent algorithm into a GRU or LSTM, which are similar algorithms but that has much better memory of what have happened in the past, which means longer meaningful sentences can be generated. If we also combine this with a attention mechaninism (which essentially is something that reminds the algorithm of the subject it generates text on) we could create long texts and even articles, which is already made today. https://digiday.com/media/washington-posts-robot-reporter-published-500-articles-last-year/
