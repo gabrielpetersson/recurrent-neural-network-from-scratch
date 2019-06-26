@@ -144,7 +144,7 @@ Link for more info: https://medium.com/explore-artificial-intelligence/an-introd
 Backpropagation look back (bp_look_back): The number of words the model will look back at while training. If set to 5, the model
 will look at the last 4 words and use them to predict the next one.</br>
 Hidden state: The special part with recurrent networks is the hidden state, which saves information from past training and uses the information to hopefully generate legitimate sentences.
-</br></br>
+</br>
 
 ## Important parameters in setupvariables.py
 
@@ -175,9 +175,9 @@ matplotlib</br>
 sklearn (only for cosine similarity)
 
 ## Conclusion and what I have learned
-Word2Vec is a very interesting form of representing words, and by experimenting with them, there is a lot to be learned. For example, if you would take the embedding of king, subtract man and add woman, the embedding would become very similar to queen. (Can be done with more sophisticated embeddings for example google) </br></br>
+Word2Vec is a very interesting form of representing words, and by experimenting with them, there is a lot to be learned. For example, if you would take the embedding of king, subtract man and add woman, the embedding would become very similar to queen. (Can be done with more sophisticated embeddings for example google) </br>
 
-Recurrent neural networks do find some correlations in texts, for example knows when to stop and when to put a comma, and how some word groups appear after another, but the recurrent algorithm with hidden states is not powerful enough to create longer meaningful sentences based on other text. But I'm still amazed that an the algorithms can make sense of spoken english and even create some of its own, even of limited quality.</br></br>
+Recurrent neural networks do find some correlations in texts, for example knows when to stop and when to put a comma, and how some word groups appear after another, but the recurrent algorithm with hidden states is not powerful enough to create longer meaningful sentences based on other text. But I'm still amazed that an the algorithms can make sense of spoken english and even create some of its own, even of limited quality.</br>
 
 To do the backpropagation with numpy in the recurrent neural network has really helped me to understand the mecahnics of backpropagation and how to deploy it on different algorithms.
 
