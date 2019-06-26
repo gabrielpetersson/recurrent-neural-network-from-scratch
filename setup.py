@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='RnnGen',
-    version='1.1.6',
+    version='1.1.8',
     packages=['rnngen', 'rnngen/word2vec', 'rnngen/processing', 'rnngen/recurrentnetwork',
               'rnngen/resources', 'rnngen/misc', 'rnngen/predict'],
 
