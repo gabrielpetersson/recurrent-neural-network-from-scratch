@@ -61,7 +61,7 @@ rnngen.generate('processed_text', embeddings_dir='word_embeddings') # Must use S
 
 ```
 
-## Output
+## Outputs
 
 ### Word2Vec
 
@@ -105,7 +105,7 @@ husband 0.423
 ### Generated Sentences
 When training this recurrent network we want it to generate sentences for us. It will every 10 seconds(if default settings) predict a new row of words, and improve with time. After a time (a few days for good quality), a few legitimate sentences will start popping up.
 ```
-loss: 4.9 #START# seeing everybody eating ruined you makes me # Loss and after that is the predicted text. Loss will go down with time
+loss: 4.9 #START# seeing everybody eating ruined you and me # Loss and after that is the predicted text. Loss will go down with time
           #START# im sorry , nice and think opening  
           
 loss: 6.82 #START# relax pretty cheese guy  # This one is predicted with a probability distribution
@@ -175,10 +175,14 @@ matplotlib</br>
 sklearn (only for cosine similarity)
 
 ## Conclusion and what I have learned
-Word2Vec is a very interesting form of representing words, and by experimenting with them, there is a lot to be learned. For example, if you would take the embedding of king, subtract man and add woman, the embedding would become very similar to queen. (Can be done with more sophisticated embeddings for example google)
+Word2Vec is a very interesting form of representing words, and by experimenting with them, there is a lot to be learned. For example, if you would take the embedding of king, subtract man and add woman, the embedding would become very similar to queen. (Can be done with more sophisticated embeddings for example google) </br></br>
 
-Recurrent neural networks do find some correlations in texts, for example knows when to stop and when to put a comma, and how some word groups appear after another, but the recurrent algorithm with hidden states is not powerful enough to create longer meaningful sentences based on other text. But I'm still amazed that an the algorithms can make sense of spoken english and even create some of its own, even of limited quality.
+Recurrent neural networks do find some correlations in texts, for example knows when to stop and when to put a comma, and how some word groups appear after another, but the recurrent algorithm with hidden states is not powerful enough to create longer meaningful sentences based on other text. But I'm still amazed that an the algorithms can make sense of spoken english and even create some of its own, even of limited quality.</br></br>
+
+To do the backpropagation with numpy in the recurrent neural network has really helped me to understand the mecahnics of backpropagation and how to deploy it on different algorithms.
 
 ## TODO/What could be done in the future
-The next obvious step is to evolve the vanilla recurrent algorithm into a GRU or LSTM, which are similar algorithms but that has much better memory of what have happened in the past, which means longer meaningful sentences can be generated. If we also combine this with a attention mechaninism (which essentially is something that reminds the algorithm of the subject it generates text on) we could create long texts and even articles, which is already made today. https://digiday.com/media/washington-posts-robot-reporter-published-500-articles-last-year/
+The next obvious step is to evolve the vanilla recurrent algorithm into a GRU or LSTM, which are similar algorithms but that has much better memory of what have happened in the past, which means longer meaningful sentences can be generated. If we also combine this with a attention mechaninism (which essentially is something that reminds the algorithm of the subject it generates text on) we could create long texts and even articles, which is already made today. https://digiday.com/media/washington-posts-robot-reporter-published-500-articles-last-year/</br></br>
+
+Other improvements that are of diminishing returns are: Increase text data, training all models for longer with increased nodes and test different processing teqchniques.
 
