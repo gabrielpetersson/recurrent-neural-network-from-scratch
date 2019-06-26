@@ -156,7 +156,7 @@ Is responsible for parameters when training Rnn, and is essential to tune for go
 Removes all sentences that contains word that appear less than 'WORD_THRESHOLD' times.
 It is defaulted at 40 because of huge datasets, but if you try on your own smaller dataset,
 this needs to be lowered.
-</br></br>
+</br>
 ##### 'TRAINING_TYPE'
 Is defaulted to 'words' but can be set to 'letters'. When set to 'letters', the generative
 model will divide the words into letters instead, and predict letter for letter. If 'letters', do not
