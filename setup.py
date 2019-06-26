@@ -1,5 +1,6 @@
 from setuptools import setup
 
+# Setup
 setup(
     name='RnnGen',
     version='1.1.8',
