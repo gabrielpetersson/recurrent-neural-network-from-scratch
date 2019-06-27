@@ -8,11 +8,11 @@ train your own word generator!
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install RnnGen.
-
 ```bash
 pip install rnngen
 ```
 ## Dependencies
+Python 3.6.7
 numpy=<1.15.4</br>
 matplotlib=<3.0.2 </br>
 sklearn=<0.0 (only for cosine similarity)
@@ -23,33 +23,55 @@ sklearn=<0.0 (only for cosine similarity)
 import rnngen  # Imports package
 from rnngen import datasets  # Imports dataset directories
 
-# Will start training the model with default settings and embeddings using word2vec. 
+# Will start training the model with default settings and pretrained embeddings. 
 # Only datasets.SIMPSONS_PROCESSED will work if using default embeddings_dir parameter.
 rnngen.generate(datasets.SIMPSONS_PROCESSED)
 ```
 
 
 ## Advanced Usage
-All parameters should be tuned in setupvariables.py for optimal results.
+All parameters should be tuned in setupvariables.py for optimal results. To use your own data, you will need a txt file at least the size of a book, and some variables might need to get changed. Read setupvariables.py for more info.</br>
+pre_process takes a text directory and a directory to to save processed text.
 
+### Preprocessing
+Preprocessing of data makes the text clean and workable.
 ```python
 import rnngen
-from rnngen import datasets
 
-# To use your own data, you will need a txt file at least the size of a book, 
-# and some variables might need to get changed. Read setupvariables.py for more info.
+rnngen.pre_process('dir_file_to_process', 'dir_to_save_processed_text')
+```
+```python
+```
+Expected output:
+```
+Preprocessing 'dir_file_to_process' to directory 'dir_to_save_processed_text'
+0 of 14000
+10000 of 14000
+...
+Preprocessing done.
+```
+You can now access your processed file and use it to train word2vec and generator. (The same processed text MUST be used to generate words and to train word2vec.) 
+### Word2Vec training
+Word2Vec uses a processed text to train word embeddings, The term Word Embeddings are explained in 'Knowledge Prerequisites' below.
+Already trained and ready to use datasets can be used with datasets.SIMPSONS_PROCESSED (400 episodes of simpsons) and datasets.BOOKS_PROCESSED(25 books).</br>
+Word2Vec takes a processed text and a directory to to save embeddings.
 
-# rnngen.pre_process will process your txt file into a clean txt file.
-rnngen.pre_process('dir_to_your_file', 'dir_to_save_file')
-
-# You can access already processed datasets: datasets.SIMPSONS_PROCESSED and datasets.BOOKS_PROCESSED.
-# SIMPSONS_PROCESSED contains 300 episode manuscripts of The Simpsons and BOOKS_PROCESSED contains 25 books.
-
-# To train Word2Vec, pass in a directory to a processed file and directory where to save the word embeddings.
-# The term Word Embeddings are explained in 'Knowledge Prerequisites' below.
+```python
 rnngen.word2vec('dir_to_processed_file', 'dir_to_save_embeddings')
-
-# You can access already trained embeddings in datasets.SIMPSONS_EMBEDDINGS_300 or 100. Yet to come BOOKS_EMBEDDINGS
+```
+or to use already processed data:
+```python
+rnngen.word2vec(datasets.SIMPSONS_PROCESSED, 'dir_to_save_embeddings')
+```
+#### Excpected output:
+```
+Loss: 0.2342 [1.46, 0.4549, 0.3594, 0.3191, 0.256, 0.2449]  # Current loss followed by earlier losses
+Iter: 600000 of 646860  # Current iteration
+Epoch: 9 of 10  # Current epoch
+he | she:  0.8017 # he and she are 2 tested word embeddings, followed by a high cosine similarity. (Similarity of words)
+almost | tv:  0.0279 # almost and tv has way lower cosine similarity than he and she, therefore low similarity.
+problem | window:  0.1334 # Sometimes interchangeable, 'i have a problem/window', therefore medium cosine similarity.
+```
 
 # To train model, pass in directory to the processed file(must be same as in word2vec), and 
 # specify the word2vec embeddings in embeddings_dir. 
@@ -71,14 +93,7 @@ rnngen.generate('processed_text', embeddings_dir='word_embeddings') # Must use S
 
 ### Word2Vec
 
-```
-Loss: 0.2342 [1.46, 0.4549, 0.3594, 0.3191, 0.256, 0.2449]  # Current loss followed by earlier losses
-Iter: 600000 of 646860  # Current iteration
-Epoch: 9 of 10  # Current epoch
-he | she:  0.8017 # he and she are 2 tested word embeddings, followed by a high cosine similarity. (Similarity of words)
-almost | tv:  0.0279 # almost and tv has way lower cosine similarity than he and she, therefore low similarity.
-problem | window:  0.1334 # Sometimes interchangeable, 'i have a problem/window', therefore medium cosine similarity.
-```
+
 These word similarities are trained over time and are nonsense in the start.
 
 ### Test of embeddings
@@ -127,9 +142,6 @@ Already trained embeddings are: datasets.SIMPSONS_EMBEDDINGS
 ### rnngen.generate('dir_to_processed_text', use_word2vec=True, embeddings_dir=datasets.SIMPSONS_EMBEDDINGS)
 Given a sentence 'the mouse caught a', the model will try to predict the next word. Hopefully it gives the word "mouse" a high probability, but if not, the model will change parameters so that next time a similar sentence appear, it will predict something similar. This is then repeated for a few hours, until it generates legitimate sentences.
 
-### rnngen.pre_process('dir_to_text', 'dir_to_save_processed_text')
-Cleans sentences from trash, and creates high quality easy to work with text.</br>
-Already processed texts are: datasets.SIMPSONS_PROCESSED and datasets.BOOKS_PROCESSED
 
 ## Knowledge prerequisites for understanding
 ### Word2Vec:
