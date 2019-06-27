@@ -31,10 +31,11 @@ rnngen.generate(datasets.SIMPSONS_PROCESSED)
 
 ## Advanced Usage
 All parameters should be tuned in setupvariables.py for optimal results. To use your own data, you will need a txt file at least the size of a book, and some variables might need to get changed. Read setupvariables.py for more info.</br>
-pre_process takes a text directory and a directory to to save processed text.
+
 
 ### Preprocessing
-Preprocessing of data makes the text clean and workable.
+Preprocessing of data makes the text clean and workable.</br>
+pre_process takes a text directory and a directory to to save processed text.
 ```python
 import rnngen
 
@@ -42,7 +43,7 @@ rnngen.pre_process('dir_file_to_process', 'dir_to_save_processed_text')
 ```
 ```python
 ```
-Expected output:
+#### Expected output:
 ```
 Preprocessing 'dir_file_to_process' to directory 'dir_to_save_processed_text'
 0 of 14000
@@ -64,15 +65,39 @@ or to use already processed data:
 rnngen.word2vec(datasets.SIMPSONS_PROCESSED, 'dir_to_save_embeddings')
 ```
 #### Excpected output:
+While training, word2vec will continuously verbose loss, earlier losses to keep track, iteration and word2vec cosine similarity (explained in Understanding Prerequities). The cosine similarity will take 2 random words and see how similar they are, and for us humans to judge the quality of the embeddings. He and She is always verbosed and should be as close to 1 as possible.
 ```
 Loss: 0.2342 [1.46, 0.4549, 0.3594, 0.3191, 0.256, 0.2449]  # Current loss followed by earlier losses
 Iter: 600000 of 646860  # Current iteration
 Epoch: 9 of 10  # Current epoch
-he | she:  0.8017 # he and she are 2 tested word embeddings, followed by a high cosine similarity. (Similarity of words)
-almost | tv:  0.0279 # almost and tv has way lower cosine similarity than he and she, therefore low similarity.
-problem | window:  0.1334 # Sometimes interchangeable, 'i have a problem/window', therefore medium cosine similarity.
+he | she:  0.8017 # 2 tested word embeddings, followed by a high word similarity.
+almost | tv:  0.0279 # These are two very different words, therefore low similarity.
+problem | window:  0.1334 # Can often be used interchangeably, therefore medium cosine similarity.
 ```
+After training is done, test_embeddings will be called. It will take 10 random words, and print out the 5 most similar.</br>
+The metric here is also cosine similarity. If these look correct/similar, your embeddings are probably good.
+```
+great 1.0  # The embedding of great is exactly the same as itself (no suprise)
+good 0.762  # The embedding of great is very similar to the embedding of 'good'. 
+terrible 0.567  # Even though terrible has the opposite meaning, both can still be used at the same places.
+wonderful 0.553  
+perfect 0.456
 
+# More interchangeable examples
+These words have the highest cosine similarity (most similar) to "he".
+he 1.0
+she 0.935
+youve 0.865
+ive 0.832
+weve 0.831
+
+These words have the highest cosine similarity (most similar) to "cat".
+cat 1.0
+dog 0.752
+clown 0.486  # Although very different words, they are both objects, and therefore have high similarity.
+bus 0.454
+husband 0.423
+```
 # To train model, pass in directory to the processed file(must be same as in word2vec), and 
 # specify the word2vec embeddings in embeddings_dir. 
 # If you set use_word2vec=False, sparse vectors will be used instead. (which are slow and boring)
@@ -100,26 +125,7 @@ These word similarities are trained over time and are nonsense in the start.
 When testing embeddings after a training session with rnngen.word2vec(), test_embeddings will test 10 of the embeddings with 5 other each, so the user can see if it has created good embeddings. The highest similarity words should be interchangable with the tested word.
 ```
 These words have the highest cosine similarity (most similar) to "great".
-great 1.0  # The embedding of great is exactly the same as itself (no suprise)
-good 0.762  # The embedding of great is very similar to the embedding of 'good'. They are nearly always interchangable
-terrible 0.567  # Even though terrible has the opposite meaning, both can still be used at the same places.
-wonderful 0.553  
-perfect 0.456
 
-# More interchangeable examples
-These words have the highest cosine similarity (most similar) to "he".
-he 1.0
-she 0.935
-youve 0.865
-ive 0.832
-weve 0.831
-
-These words have the highest cosine similarity (most similar) to "cat".
-cat 1.0
-dog 0.752
-clown 0.486  # Although very different words, they are both objects, and therefore have high similarity.
-bus 0.454
-husband 0.423
 
 ```
 
