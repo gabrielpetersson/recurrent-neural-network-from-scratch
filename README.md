@@ -15,7 +15,7 @@ pip install rnngen
 Python 3.6.7
 numpy=<1.15.4</br>
 matplotlib=<3.0.2 </br>
-sklearn=<0.0 (only for cosine similarity)
+sklearn (scikit-learn)=<0.19.1 (only for cosine similarity)
 
 ## Usage
 
