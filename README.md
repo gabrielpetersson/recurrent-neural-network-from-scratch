@@ -1,8 +1,8 @@
 # Recurrent Neural Network Generator
 
-RnnGen is a generative natural language processing program using Word2Vec. 
+RnnGen is a generative natural language processing liberary using Word2Vec. 
 Everything is built from scratch for learning purposes, using numpy for machine learning math.</br>
-With RnnGen, you can use an already implemented or your own set of text, create word vector embeddings of it and</br>
+With RnnGen, you can use your own set of text or an already implemented, create word vector embeddings of it and</br>
 train your own word generator!
 
 ## Installation
@@ -50,10 +50,10 @@ Preprocessing 'dir_file_to_process' to directory 'dir_to_save_processed_text'
 ...
 Preprocessing done.
 ```
-You can now access your processed file and use it to train word2vec and generator. (The same processed text MUST be used to generate words and to train word2vec.) </br>
+You can now access your processed file and use it to train word2vec and generator. (The same processed text MUST be used to generate words <b>AND</b> to train word2vec.) </br>
 ### Word2Vec training
-Word2Vec uses a processed text to train word embeddings, The term Word Embeddings are explained in 'Knowledge Prerequisites' below.</br>
-Already trained and ready to use datasets can be used with datasets.SIMPSONS_PROCESSED (400 episodes of simpsons) and datasets.BOOKS_PROCESSED(25 books).</br>
+Word2Vec uses a processed text to train word embeddings. The term Word Embeddings are explained in 'Knowledge Prerequisites' below.</br></br>
+Already trained and ready to use datasets can be used: datasets.SIMPSONS_PROCESSED (400 episodes of simpsons) and datasets.BOOKS_PROCESSED(25 books).</br></br>
 Word2Vec takes a processed text and a directory to to save embeddings.
 
 ```python
@@ -67,17 +67,17 @@ rnngen.word2vec(datasets.SIMPSONS_PROCESSED, 'dir_to_save_embeddings')
 </br>
 
 #### Expected output:
-While training, word2vec will continuously verbose loss, earlier losses to keep track, iteration and word2vec cosine similarity (explained in Understanding Prerequities). The cosine similarity will take 2 random words and see how similar they are, and for us humans to judge the quality of the embeddings. He and She is always verbosed and should be as close to 1 as possible.
+While training, word2vec will continuously verbose loss/earlier loss, number of iterations and word2vec cosine similarity (explained in Understanding Prerequities). The cosine similarity will take 2 random words and see how similar they are, and for us humans to judge the quality of the embeddings. He and She is always verbosed and should be as close to 1 as possible.
 ```
 Loss: 0.2342 [1.46, 0.4549, 0.3594, 0.3191, 0.256, 0.2449]  # Current loss followed by earlier losses
 Iter: 600000 of 646860  # Current iteration
 Epoch: 9 of 10  # Current epoch
-he | she:  0.8017 # 2 tested word embeddings, followed by a high word similarity.
+he | she:  0.8017 # Two tested word embeddings, followed by a high word similarity.
 almost | tv:  0.0279 # These are two very different words, therefore low similarity.
 problem | window:  0.1334 # Can often be used interchangeably, therefore medium cosine similarity.
 ```
-After training is done, test_embeddings will be called. It will take 10 random words, and print out the 5 most similar to them.</br>
-The metric here is also cosine similarity. If these look correct/similar, your embeddings are probably good.
+After training is done, test_embeddings will be called. It will take 10 random words, and print out the 5 most similar to them.</br></br>
+The metric here is also cosine similarity. If these look correct/similar and the words can be used interchangeably, your embeddings are probably good.
 ```
 These words have the highest cosine similarity (most similar) to "great".
 great 1.0  # The embedding of great is exactly the same as itself (no suprise)
@@ -113,7 +113,7 @@ rnngen.generate('dir_to_processed_text',  use_word2vec=True, embeddings_dir=data
 ```
 
 #### Expected output
-It will verbose every 10 seconds a loss and two predicted text. The upper text is chosen using a probability distribution and the below one is independently predicted using a greedy 'take the one with highest probability'.
+Every 10 seconds it will verbose a loss and two predicted text. The upper text is chosen using a probability distribution and the below one is independently predicted using a greedy 'take the one with highest probability'.
 ```
 loss: 6.82 #START# relax pretty cheese guy 
            #START# im what school say  
@@ -126,7 +126,8 @@ loss: 4.9 #START# seeing everybody eating ruined you and me
 
 ### Example of full usage
 ```python
-#Example using datasets.BOOKS (which is './rnngen/resources/datasets/books.txt')
+# Example using datasets.BOOKS (which is './rnngen/resources/datasets/books.txt')
+
 import rnngen
 from rnngen import datasets
 
@@ -139,12 +140,12 @@ rnngen.generate('processed_text', embeddings_dir='word_embeddings') # Must use S
 
 ## Knowledge prerequisites for understanding
 ### Word2Vec:
-Instead of sparse vector representations of a word, you can have a dense representation. These are called embeddings. </br>
+Instead of sparse vector representations of words, you can use dense representations. These are called embeddings. </br>
 Link for more info: https://en.wikipedia.org/wiki/Word2vec
 #### Common words
 Embedding: A vector of size 300 (default) that represent a word. Embeddings in plural is a matrix (vocabulary size, embedding size)</br></br>
-Cosine Similarity: Is used for testing embeddings. The cosine similarity between two word vectors is the semantic difference.
-A cosine similarity of 1 means interchangable words, and a cosine similarity of -1 means completely different words. The words 'he' and 'she' should have close to 1.
+Cosine Similarity: Is used for testing embeddings. The cosine similarity between two word vectors is the semantic similarity.
+A cosine similarity of 1 means interchangable words, and a cosine similarity of -1 means completely different words. The words 'he' and 'she' should have close to 1. https://en.wikipedia.org/wiki/Cosine_similarity
 </br></br>
 
 ### Recurrent neural network:
@@ -165,9 +166,9 @@ Is responsible for parameters when training Rnn, and is essential to tune for go
 
 ### preprocess_setup:
 ##### 'WORD_THRESHOLD'
-Removes all sentences that contains word that appear less than 'WORD_THRESHOLD' times.
+Removes all sentences that contains a word that appear less than 'WORD_THRESHOLD' times.
 It is defaulted at 40 because of huge datasets, but if you try on your own smaller dataset,
-this needs to be lowered.
+this needs to be lowered to under 3.
 </br>
 ##### 'TRAINING_TYPE'
 Is defaulted to 'words' but can be set to 'letters'. When set to 'letters', the generative
