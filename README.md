@@ -31,9 +31,9 @@ rnngen.generate(datasets.SIMPSONS_PROCESSED)
 
 ## Advanced Usage
 All parameters should be tuned in setupvariables.py for optimal results. To use your own data, you will need a txt file at least the size of a book, and some variables might need to get changed. Read setupvariables.py for more info.</br>
+</br>
 
-
-### Preprocessing
+### Preprocessing rnngen.pre_process()
 Preprocessing of data makes the text clean and workable.</br>
 pre_process takes a text directory and a directory to save the processed text.
 ```python
@@ -51,7 +51,8 @@ Preprocessing 'dir_file_to_process' to directory 'dir_to_save_processed_text'
 Preprocessing done.
 ```
 You can now access your processed file and use it to train word2vec and generator. (The same processed text MUST be used to generate words <b>AND</b> to train word2vec.) </br>
-### Word2Vec training
+
+### Word2Vec training rnngen.word2vec()
 Word2Vec uses a processed text to train word embeddings. The term Word Embeddings are explained in 'Knowledge Prerequisites' below.</br></br>
 Already trained and ready to use datasets can be used: datasets.SIMPSONS_PROCESSED (400 episodes of simpsons) and datasets.BOOKS_PROCESSED(25 books).</br></br>
 Word2Vec takes a processed text and a directory to save the embeddings.
@@ -101,7 +102,10 @@ clown 0.486  # Although very different words, they are both objects, and therefo
 bus 0.454
 husband 0.423
 ```
-### Generator training
+
+</br>
+
+### Generator training rnngen.generate()
 The generator generates sentences using word embeddings. It takes a processed text and directory to embeddings. You can also choose to train using sparse vectors, by setting word2vec to False. </br>If embeddings_dir is not specified to something, it will use datasets.SIMPSONS_EMBEDDINGS_300 as default, and then only datasets.SIMPSONS_PROCESSED can be used as text.</br></br>
 Default: rnngen.generate('dir_to_processed_file',  use_word2vec=True, embeddings_dir=datasets.SIMPSONS_EMBEDDINGS_300)</br>
 The pretrained embeddings are: datasets.SIMPSONS_EMEBDDINGS_300 and SIMPSONS_EMBEDDINGS_100 (300 respectively 100 embedding_size)</br></br>The model will have to train for a few days to give good results.
