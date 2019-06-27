@@ -1,7 +1,9 @@
 # Recurrent Neural Network Generator
 
 RnnGen is a generative natural language processing program using Word2Vec. 
-Everything is built from scratch for learning purposes, using numpy for machine learning math.
+Everything is built from scratch for learning purposes, using numpy for machine learning math.</br>
+With RnnGen, you can use an already implemented or your own set of text, create word vector embeddings of it and</br>
+train your own word generator!
 
 ## Installation
 
@@ -10,6 +12,10 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install RnnGen.
 ```bash
 pip install rnngen
 ```
+## Dependencies
+numpy=<1.15.4</br>
+matplotlib=<3.0.2 </br>
+sklearn=<0.0 (only for cosine similarity)
 
 ## Usage
 
@@ -169,10 +175,7 @@ learning rate decay, but it can also increase quality on word embeddings.
 
 ### More info about each variable is in the setupvariables.py file.
 
-## Dependencies
-numpy</br>
-matplotlib</br>
-sklearn (only for cosine similarity)
+
 
 ## Conclusion and what I have learned
 Word2Vec is a very interesting form of representing words, and by experimenting with them, there is a lot to be learned. For example, if you would take the embedding of king, subtract man and add woman, the embedding would become very similar to queen. (Can be done with more sophisticated embeddings for example google) </br>
