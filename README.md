@@ -41,8 +41,7 @@ import rnngen
 
 rnngen.pre_process('dir_file_to_process', 'dir_to_save_processed_text')
 ```
-```python
-```
+
 #### Expected output:
 ```
 Preprocessing 'dir_file_to_process' to directory 'dir_to_save_processed_text'
@@ -64,7 +63,9 @@ or to use already processed data:
 ```python
 rnngen.word2vec(datasets.SIMPSONS_PROCESSED, 'dir_to_save_embeddings')
 ```
+
 </br>
+
 #### Expected output:
 While training, word2vec will continuously verbose loss, earlier losses to keep track, iteration and word2vec cosine similarity (explained in Understanding Prerequities). The cosine similarity will take 2 random words and see how similar they are, and for us humans to judge the quality of the embeddings. He and She is always verbosed and should be as close to 1 as possible.
 ```
