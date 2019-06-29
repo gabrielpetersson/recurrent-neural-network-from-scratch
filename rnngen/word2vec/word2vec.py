@@ -190,7 +190,7 @@ def word2vec_trainer(text_dir, save_emb_dir, previously_trained_emb=''):
                     words_to_check = get_words_to_check(dicts, test_words, random_words=4)
                     print_word_similarity(words_to_check, word_emb, dicts)
                 if iteration > 30000 or epoch >= 1:
-                    np.save(f'emb{epoch}', word_emb)
+                    np.save(save_emb_dir, word_emb)
 
             if short and iteration > 100:   # Only for developing, easier checking so things work out.
                 np.save(save_emb_dir, word_emb)
