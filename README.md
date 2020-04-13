@@ -186,11 +186,6 @@ learning rate decay, but it can also increase quality on word embeddings.
 
 ### More info about each variable is in the setupvariables.py file.
 
-## Inspiration
-I have taken inspiration from:</br></br>
-https://github.com/revsic/numpy-rnn/blob/master/RNN_numpy.ipynb </br></br>
-https://towardsdatascience.com/word2vec-from-scratch-with-numpy-8786ddd49e72
-
 ## Conclusion and what I have learned
 Word2Vec is a very interesting form of representing words, and by experimenting with them, there is a lot to be learned. For example, if you would take the embedding of king, subtract man and add woman, the embedding would become very similar to queen. (Can be done with more sophisticated embeddings for example google) </br>
 
